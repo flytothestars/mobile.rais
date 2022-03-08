@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../screens/login.dart';
+import '../services/user_service.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -6,10 +8,47 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int currenIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('home')),
+      appBar: AppBar(
+        title: Text('Blog App'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                logout().then((value) => {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => Login()),
+                          (route) => false)
+                    });
+              },
+              icon: Icon(Icons.exit_to_app))
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+          notchMargin: 5,
+          elevation: 10,
+          clipBehavior: Clip.antiAlias,
+          shape: CircularNotchedRectangle(),
+          child: BottomNavigationBar(
+            items: [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
+            ],
+            currentIndex: currenIndex,
+            onTap: (val) {
+              setState(() {
+                currenIndex = val;
+              });
+            },
+          )),
     );
   }
 }

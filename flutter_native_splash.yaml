@@ -1,0 +1,8 @@
+flutter_native_splash:
+  color: "808080"
+  android: true
+  ios: true
+  fullscreen: true
+  android_gravity: center
+
+  color_dark: "808080"
