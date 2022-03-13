@@ -39,6 +39,7 @@ dependencies:
   image_picker: ^0.8.4+10
   flutter_overboard: ^3.1.1
   is_first_run: ^1.0.0
+  google_maps_flutter: ^2.1.2
   
 dev_dependencies:
   flutter_test:
