@@ -23,20 +23,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Blog App'),
-      //   actions: [
-      //     IconButton(
-      //         onPressed: () {
-      //           logout().then((value) => {
-      //                 Navigator.of(context).pushAndRemoveUntil(
-      //                     MaterialPageRoute(builder: (context) => Login()),
-      //                     (route) => false)
-      //               });
-      //         },
-      //         icon: Icon(Icons.exit_to_app))
-      //   ],
-      // ),
       body: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: _kGooglePlex,
