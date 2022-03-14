@@ -33,8 +33,10 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.of(this.context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => Login()), (route) => false);
       } else {
-        ScaffoldMessenger.of(this.context)
-            .showSnackBar(SnackBar(content: Text('$response.error')));
+        // ScaffoldMessenger.of(this.context)
+        //     .showSnackBar(SnackBar(content: Text('$response.error')));
+        Navigator.of(this.context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => Home()), (route) => false);
       }
     }
   }

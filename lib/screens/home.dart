@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/profile.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -14,6 +15,9 @@ class _HomeState extends State<Home> {
 
   late GoogleMapController googleMapController;
   Set<Marker> markers = {};
+  List<Marker> markersPostamat = [];
+  double lat = 0;
+  double lng = 0;
   // Completer<GoogleMapController> _controller = Completer();
   // late GoogleMapController newGoogleMapController;
   // late Position currentPosition;
@@ -33,41 +37,83 @@ class _HomeState extends State<Home> {
   //       .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
   // }
 
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(43.238949, 76.889709),
-    zoom: 14.4746,
-  );
+  // static final CameraPosition _kGooglePlex = CameraPosition(
+  //   target: LatLng(43.238949, 76.889709),
+  //   zoom: 14.4746,
+  // );
+
+  _initUserCurrentPosition() async {
+    Position position = await _determinePosition();
+    lat = position.latitude;
+    lng = position.longitude;
+    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(position.latitude, position.longitude), zoom: 15)));
+    markers.clear();
+
+    markers.add(Marker(
+        markerId: const MarkerId('currentLocation'),
+        position: LatLng(position.latitude, position.longitude)));
+  }
+
+  _initPostamatPosition() {
+    markersPostamat.add(Marker(
+        markerId: MarkerId("Postamat1"),
+        position: LatLng(43.224671, 76.862497),
+        infoWindow: InfoWindow(title: "Postamat #1634"),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        onTap: () {
+          _showButtomModel(context);
+        }));
+    markersPostamat.add(Marker(
+        markerId: MarkerId("Postamat2"),
+        position: LatLng(43.226911, 76.861837),
+        infoWindow: InfoWindow(title: "Postamat #1635"),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        onTap: () {
+          _showButtomModel(context);
+        }));
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    _initPostamatPosition();
+    _initUserCurrentPosition();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: _kGooglePlex,
-        myLocationEnabled: true,
-        zoomGesturesEnabled: true,
-        zoomControlsEnabled: true,
-        onMapCreated: (GoogleMapController controller) {
-          googleMapController = controller;
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          Position position = await _determinePosition();
-
-          googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-              CameraPosition(
-                  target: LatLng(position.latitude, position.longitude),
-                  zoom: 14)));
-          markers.clear();
-
-          markers.add(Marker(
-              markerId: const MarkerId('currentLocation'),
-              position: LatLng(position.latitude, position.longitude)));
-
-          setState(() {});
-        },
-        child: Icon(Icons.add),
+      body: currenIndex == 0
+          ? GoogleMap(
+              mapType: MapType.normal,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(lat, lng),
+                zoom: 15,
+              ),
+              myLocationEnabled: true,
+              zoomGesturesEnabled: true,
+              zoomControlsEnabled: true,
+              onMapCreated: (GoogleMapController controller) {
+                googleMapController = controller;
+              },
+              markers: markersPostamat.map((e) => e).toSet(),
+            )
+          : Profile(),
+      floatingActionButton: Container(
+        height: 70,
+        width: 70,
+        child: FittedBox(
+          child: FloatingActionButton(
+              onPressed: () {},
+              child: Container(
+                height: 30,
+                width: 30,
+                child: new Image.asset('assets/qr_code_48px.png'),
+              )),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
@@ -88,6 +134,14 @@ class _HomeState extends State<Home> {
             },
           )),
     );
+  }
+
+  void _showButtomModel(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext c) {
+          return Container();
+        });
   }
 
   Future<Position> _determinePosition() async {
