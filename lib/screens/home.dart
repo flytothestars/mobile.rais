@@ -76,6 +76,10 @@ class _HomeState extends State<Home> {
     setState(() {});
   }
 
+  void _scanBarcode() async {
+    // List<Barcode> barcodes = List();
+  }
+
   @override
   void initState() {
     _initPostamatPosition();

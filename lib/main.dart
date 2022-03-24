@@ -6,9 +6,12 @@ void main() {
 }
 
 class App extends StatelessWidget {
+  final ThemeData theme = ThemeData(primaryColor: Colors.yellow);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: this.theme,
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
     );
