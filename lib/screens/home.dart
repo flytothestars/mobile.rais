@@ -111,7 +111,9 @@ class _HomeState extends State<Home> {
         width: 70,
         child: FittedBox(
           child: FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                _scanBarcode();
+              },
               child: Container(
                 height: 30,
                 width: 30,
