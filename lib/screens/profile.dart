@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/widgets/widgetButton.dart';
+import 'package:mobileapp_diplom2022_1_0_0/services/user_service.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -92,7 +93,11 @@ class _ProfileState extends State<Profile> {
             ),
             // Button
             ProfileMenu(
-                icon: FontAwesomeIcons.person, text: 'Профиль', press: () {}),
+                icon: FontAwesomeIcons.person,
+                text: 'Профиль',
+                press: () {
+                  print(getUserId());
+                }),
             ProfileMenu(
                 icon: FontAwesomeIcons.bell, text: 'Уведомление', press: () {}),
             ProfileMenu(

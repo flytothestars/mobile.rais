@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_overboard/flutter_overboard.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/login.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/logreg.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
@@ -18,11 +19,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         showBullets: true,
         skipCallback: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: ((context) => Login())));
+              .push(MaterialPageRoute(builder: ((context) => LogReg())));
         },
         finishCallback: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: ((context) => Login())));
+              .push(MaterialPageRoute(builder: ((context) => LogReg())));
         },
       ),
     );

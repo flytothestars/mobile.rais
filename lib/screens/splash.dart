@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:is_first_run/is_first_run.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/logreg.dart';
 import 'onboarding.dart';
 import 'package:mobileapp_diplom2022_1_0_0/models/api_response.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/home.dart';
@@ -23,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
           .push(MaterialPageRoute(builder: (context) => OnboardingScreen()));
     } else if (token == '' || token == null) {
       Navigator.of(this.context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => Login()), (route) => false);
+          MaterialPageRoute(builder: (context) => LogReg()), (route) => false);
     } else {
       ApiResponse response = await getUserDetail();
       if (response.error == null) {
@@ -31,7 +32,8 @@ class _SplashScreenState extends State<SplashScreen> {
             MaterialPageRoute(builder: (context) => Home()), (route) => false);
       } else if (response.error == unauthorized) {
         Navigator.of(this.context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => Login()), (route) => false);
+            MaterialPageRoute(builder: (context) => LogReg()),
+            (route) => false);
       } else {
         // ScaffoldMessenger.of(this.context)
         //     .showSnackBar(SnackBar(content: Text('$response.error')));

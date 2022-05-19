@@ -11,7 +11,6 @@ class User {
     return User(
         id: json['user']['id'],
         name: json['user']['name'],
-        image: json['user']['image'],
         email: json['user']['email'],
         token: json['token']);
   }

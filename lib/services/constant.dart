@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
-const baseURL = 'http://172.20.10.2:8080/api';
+const baseURL = 'http://192.168.0.116:8080/api';
 const loginURL = baseURL + '/login';
 const registerURL = baseURL + '/register';
 const logoutURL = baseURL + '/logout';
 const userURL = baseURL + '/user';
 const postURL = baseURL + '/posts';
 const commentURL = baseURL + '/comments';
+//sms
+const sendSmsURL = baseURL + '/sms';
+const checkSmsURL = baseURL + '/check';
+const listPostURL = baseURL + '/list';
 
 const serverError = 'Server error';
 const unauthorized = 'Unauthorized';
