@@ -107,7 +107,11 @@ class _ProfileState extends State<Profile> {
                 text: 'Служба поддержка',
                 press: () {}),
             ProfileMenu(
-                icon: FontAwesomeIcons.arrowRight, text: 'Выйти', press: () {}),
+                icon: FontAwesomeIcons.arrowRight,
+                text: 'Выйти',
+                press: () {
+                  logout();
+                }),
           ],
         ));
   }

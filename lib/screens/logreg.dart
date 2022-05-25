@@ -92,13 +92,17 @@ class _LogRegState extends State<LogReg> {
             SizedBox(
               height: 10,
             ),
-            smsModel
-                ? TextFormField(
+            AnimatedOpacity(
+                // If the widget is visible, animate to 0.0 (invisible).
+                // If the widget is hidden, animate to 1.0 (fully visible).
+                opacity: smsModel ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 500),
+                // The green box must be a child of the AnimatedOpacity widget.
+                child: TextFormField(
                     keyboardType: TextInputType.number,
                     controller: txtCode,
                     validator: (val) => val!.isEmpty ? 'Invalid code' : null,
-                    decoration: kInputDecoration('000-000'))
-                : Text(''),
+                    decoration: kInputDecoration('000-000'))),
           ],
         ),
       ),

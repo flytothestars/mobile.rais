@@ -40,32 +40,40 @@ Future<ApiResponse> checkSms(
   return apiResponse;
 }
 
-Future<ApiResponse> listPost() async {
-  ApiResponse apiResponse = ApiResponse();
-  try {
-    final response = await http
-        .post(Uri.parse(listPostURL), headers: {'Accept': 'application/json'});
+// Future<ApiResponse> listPost() async {
+//   ApiResponse apiResponse = ApiResponse();
+//   try {
+//     final response = await http
+//         .get(Uri.parse(listPostURL), headers: {'Accept': 'application/json'});
+//     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" +
+//         response.body);
+//     print(response.statusCode);
+//     switch (response.statusCode) {
+//       case 200:
+//         // apiResponse.data = jsonDecode(response.body)['post']
+//         //     .map((p) => Post.fromJson(p))
+//         //     .toList();
 
-    switch (response.statusCode) {
-      case 200:
-        apiResponse.data = Post.fromJson(jsonDecode(response.body));
-        break;
-      case 422:
-        final errors = jsonDecode(response.body)['errors'];
-        apiResponse.error = errors[errors.keys.ElementAt(0)];
-        break;
-      case 403:
-        apiResponse.error = jsonDecode(response.body)['message'];
-        break;
-      default:
-        apiResponse.error = somethingWentWrong;
-    }
-  } catch (e) {
-    apiResponse.error = serverError;
-  }
+//         print("");
+//         //apiResponse.data = Post.fromJson(jsonDecode(response.body));
+//         apiResponse.data as List<dynamic>;
+//         break;
+//       case 422:
+//         final errors = jsonDecode(response.body)['errors'];
+//         apiResponse.error = errors[errors.keys.ElementAt(0)];
+//         break;
+//       case 403:
+//         apiResponse.error = jsonDecode(response.body)['message'];
+//         break;
+//       default:
+//         apiResponse.error = somethingWentWrong;
+//     }
+//   } catch (e) {
+//     apiResponse.error = serverError;
+//   }
 
-  return apiResponse;
-}
+//   return apiResponse;
+// }
 
 Future<ApiResponse> login(String email, String password) async {
   ApiResponse apiResponse = ApiResponse();

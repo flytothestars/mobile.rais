@@ -1,8 +1,8 @@
 class Post {
   int? id;
   String? address;
-  String? lat;
-  String? lng;
+  double? lat;
+  double? lng;
   String? qr_code;
   int? slot;
   int? freeslot;
@@ -18,12 +18,12 @@ class Post {
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-        id: json['post']['id'],
-        address: json['post']['address'],
-        lat: json['post']['lat'],
-        lng: json['post']['lng'],
-        qr_code: json['post']['qr_code'],
-        slot: json['post']['slot'],
-        freeslot: json['post']['freeslot']);
+        id: json['id'],
+        address: json['address'],
+        lat: json['lat'],
+        lng: json['lng'],
+        qr_code: json['qr_code'],
+        slot: json['slot'],
+        freeslot: json['freeslot']);
   }
 }

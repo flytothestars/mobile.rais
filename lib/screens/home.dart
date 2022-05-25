@@ -1,9 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart';
+import 'package:mobileapp_diplom2022_1_0_0/models/api_response.dart';
+import 'package:mobileapp_diplom2022_1_0_0/models/post.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/profile.dart';
+import 'package:mobileapp_diplom2022_1_0_0/services/constant.dart';
+import 'package:mobileapp_diplom2022_1_0_0/services/user_service.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -16,31 +23,9 @@ class _HomeState extends State<Home> {
   late GoogleMapController googleMapController;
   Set<Marker> markers = {};
   List<Marker> markersPostamat = [];
+  List<Post> _postList = [];
   double lat = 0;
   double lng = 0;
-  // Completer<GoogleMapController> _controller = Completer();
-  // late GoogleMapController newGoogleMapController;
-  // late Position currentPosition;
-  // var geoLocator = Geolocator();
-
-  // void locatePosition() async {
-  //   Position position = await Geolocator.getCurrentPosition(
-  //       desiredAccuracy: LocationAccuracy.high);
-  //   currentPosition = position;
-
-  //   LatLng latLngPosition = LatLng(position.latitude, position.longitude);
-
-  //   CameraPosition cameraPosition =
-  //       new CameraPosition(target: latLngPosition, zoom: 14);
-
-  //   newGoogleMapController
-  //       .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-  // }
-
-  // static final CameraPosition _kGooglePlex = CameraPosition(
-  //   target: LatLng(43.238949, 76.889709),
-  //   zoom: 14.4746,
-  // );
 
   _initUserCurrentPosition() async {
     Position position = await _determinePosition();
@@ -56,19 +41,18 @@ class _HomeState extends State<Home> {
         position: LatLng(position.latitude, position.longitude)));
   }
 
-  _initPostamatPosition() {
+  Future<List<Post>> retrievePosts() async {
+    final response = await http
+        .get(Uri.parse(listPostURL), headers: {'Accept': 'application/json'});
+    var data = jsonDecode(response.body.toString());
+    return _postList;
+  }
+
+  _initPostamatPosition() async {
     markersPostamat.add(Marker(
-        markerId: MarkerId("Postamat1"),
+        markerId: MarkerId(''),
         position: LatLng(43.224671, 76.862497),
-        infoWindow: InfoWindow(title: "Postamat #1634"),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-        onTap: () {
-          _showButtomModel(context);
-        }));
-    markersPostamat.add(Marker(
-        markerId: MarkerId("Postamat2"),
-        position: LatLng(43.226911, 76.861837),
-        infoWindow: InfoWindow(title: "Postamat #1635"),
+        infoWindow: InfoWindow(title: "Postamat #"),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
         onTap: () {
           _showButtomModel(context);
@@ -82,6 +66,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    retrievePosts();
     _initPostamatPosition();
     _initUserCurrentPosition();
     super.initState();
@@ -105,7 +90,14 @@ class _HomeState extends State<Home> {
               },
               markers: markersPostamat.map((e) => e).toSet(),
             )
-          : Profile(),
+          : ListView.builder(
+              itemCount: _postList.length,
+              itemBuilder: (BuildContext context, int index) {
+                Post post = _postList[index];
+                return Text('${post.address}');
+              },
+            ),
+      //Profile(),
       floatingActionButton: Container(
         height: 70,
         width: 70,
@@ -146,7 +138,9 @@ class _HomeState extends State<Home> {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext c) {
-          return Container();
+          return Container(
+            child: Text("asd"),
+          );
         });
   }
 
