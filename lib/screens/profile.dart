@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/BonusPage.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/NotifiPage.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/chat.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/history.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/logreg.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/setting.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/widgets/widgetButton.dart';
 import 'package:mobileapp_diplom2022_1_0_0/services/user_service.dart';
 
@@ -24,7 +30,6 @@ class _ProfileState extends State<Profile> {
                 width: 115,
                 child: Stack(
                   fit: StackFit.expand,
-                  overflow: Overflow.visible,
                   children: [
                     CircleAvatar(
                         backgroundImage: NetworkImage(
@@ -59,7 +64,11 @@ class _ProfileState extends State<Profile> {
                 Spacer(),
                 SizedBox(
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NotifiPage()));
+                    },
                     child: new Image.asset('assets/star_160px.png'),
                     style: TextButton.styleFrom(
                       primary: Colors.grey[850],
@@ -75,8 +84,12 @@ class _ProfileState extends State<Profile> {
                 Spacer(),
                 SizedBox(
                   child: TextButton(
-                    onPressed: () {},
-                    child: Text("Бонус"),
+                    onPressed: () {
+                      Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const BonusPage()));
+                    },
+                    child: Text("Бонус, акции"),
                     style: TextButton.styleFrom(
                       primary: Colors.grey[850],
                       padding: EdgeInsets.all(20),
@@ -93,24 +106,33 @@ class _ProfileState extends State<Profile> {
             ),
             // Button
             ProfileMenu(
-                icon: FontAwesomeIcons.person,
-                text: 'Профиль',
-                press: () {
-                  print(getUserId());
+                icon: FontAwesomeIcons.bell, text: 'История поездок', press: () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HistoryPage()));
                 }),
             ProfileMenu(
-                icon: FontAwesomeIcons.bell, text: 'Уведомление', press: () {}),
-            ProfileMenu(
-                icon: FontAwesomeIcons.gears, text: 'Настройки', press: () {}),
+                icon: FontAwesomeIcons.gears, text: 'Настройки', press: () {
+                  Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingPage()));
+  }),
             ProfileMenu(
                 icon: FontAwesomeIcons.personCircleCheck,
                 text: 'Служба поддержка',
-                press: () {}),
+                press: () {
+                 Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChatPage()),
+                );
+                }),
             ProfileMenu(
                 icon: FontAwesomeIcons.arrowRight,
                 text: 'Выйти',
                 press: () {
                   logout();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => LogReg()), (route) => false);
                 }),
           ],
         ));

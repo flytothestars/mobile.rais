@@ -23,7 +23,6 @@ class _HomeState extends State<Home> {
   late GoogleMapController googleMapController;
   Set<Marker> markers = {};
   List<Marker> markersPostamat = [];
-  List<Post> _postList = [];
   double lat = 0;
   double lng = 0;
 
@@ -41,16 +40,9 @@ class _HomeState extends State<Home> {
         position: LatLng(position.latitude, position.longitude)));
   }
 
-  Future<List<Post>> retrievePosts() async {
-    final response = await http
-        .get(Uri.parse(listPostURL), headers: {'Accept': 'application/json'});
-    var data = jsonDecode(response.body.toString());
-    return _postList;
-  }
-
   _initPostamatPosition() async {
     markersPostamat.add(Marker(
-        markerId: MarkerId(''),
+        markerId: MarkerId('Post'),
         position: LatLng(43.224671, 76.862497),
         infoWindow: InfoWindow(title: "Postamat #"),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
@@ -66,7 +58,6 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    retrievePosts();
     _initPostamatPosition();
     _initUserCurrentPosition();
     super.initState();
@@ -90,13 +81,7 @@ class _HomeState extends State<Home> {
               },
               markers: markersPostamat.map((e) => e).toSet(),
             )
-          : ListView.builder(
-              itemCount: _postList.length,
-              itemBuilder: (BuildContext context, int index) {
-                Post post = _postList[index];
-                return Text('${post.address}');
-              },
-            ),
+          : Profile(),
       //Profile(),
       floatingActionButton: Container(
         height: 70,

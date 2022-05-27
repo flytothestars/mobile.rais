@@ -23,11 +23,14 @@ class _LogRegState extends State<LogReg> {
   var code;
 
   void _loginUser() async {
+    print('======================');
     final response = await http.post(Uri.parse(sendSmsURL), headers: {
       'Accept': 'application/json'
     }, body: {
       'number': txtNumber.text,
     });
+    print('====================');
+    print(jsonDecode(response.body));
     setState(() {
       code = jsonDecode(response.body)['code'];
     });
