@@ -5,9 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart';
 import 'package:mobileapp_diplom2022_1_0_0/models/api_response.dart';
 import 'package:mobileapp_diplom2022_1_0_0/models/post.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/QrPage.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/profile.dart';
 import 'package:mobileapp_diplom2022_1_0_0/services/constant.dart';
 import 'package:mobileapp_diplom2022_1_0_0/services/user_service.dart';
@@ -23,6 +23,7 @@ class _HomeState extends State<Home> {
   late GoogleMapController googleMapController;
   Set<Marker> markers = {};
   List<Marker> markersPostamat = [];
+  List<Post> _postList = [];
   double lat = 0;
   double lng = 0;
 
@@ -40,9 +41,16 @@ class _HomeState extends State<Home> {
         position: LatLng(position.latitude, position.longitude)));
   }
 
+  Future<List<Post>> retrievePosts() async {
+    final response = await http
+        .get(Uri.parse(listPostURL), headers: {'Accept': 'application/json'});
+    var data = jsonDecode(response.body.toString());
+    return _postList;
+  }
+
   _initPostamatPosition() async {
     markersPostamat.add(Marker(
-        markerId: MarkerId('Post'),
+        markerId: MarkerId(''),
         position: LatLng(43.224671, 76.862497),
         infoWindow: InfoWindow(title: "Postamat #"),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
@@ -58,6 +66,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    retrievePosts();
     _initPostamatPosition();
     _initUserCurrentPosition();
     super.initState();
@@ -81,7 +90,14 @@ class _HomeState extends State<Home> {
               },
               markers: markersPostamat.map((e) => e).toSet(),
             )
-          : Profile(),
+            : Profile(
+          // : ListView.builder(
+          //     itemCount: _postList.length,
+          //     itemBuilder: (BuildContext context, int index) {
+          //       Post post = _postList[index];
+          //       return Text('${post.address}');
+          //     },
+            ),
       //Profile(),
       floatingActionButton: Container(
         height: 70,
@@ -89,7 +105,9 @@ class _HomeState extends State<Home> {
         child: FittedBox(
           child: FloatingActionButton(
               onPressed: () {
-                _scanBarcode();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const QRViewExample()));
               },
               child: Container(
                 height: 30,
@@ -124,6 +142,7 @@ class _HomeState extends State<Home> {
         context: context,
         builder: (BuildContext c) {
           return Container(
+            height:450,
             child: Text("asd"),
           );
         });

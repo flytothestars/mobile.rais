@@ -45,6 +45,7 @@ dependencies:
   open_file: ^3.2.1
   uuid: ^3.0.6
   settings_ui: ^2.0.2
+  mobile_scanner: ^1.1.1
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to
