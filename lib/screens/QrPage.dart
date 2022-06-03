@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:mobileapp_diplom2022_1_0_0/screens/aboutpostpage.dart';
 
 class QRViewExample extends StatefulWidget {
   const QRViewExample({Key? key}) : super(key: key);
@@ -9,14 +10,14 @@ class QRViewExample extends StatefulWidget {
 }
 
 class _QRViewExampleState extends State<QRViewExample> {
-
   MobileScannerController cameraController = MobileScannerController();
+  bool stopScan = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Mobile Scanner'),
+          title: const Text('QR'),
           actions: [
             IconButton(
               color: Colors.white,
@@ -59,7 +60,14 @@ class _QRViewExampleState extends State<QRViewExample> {
             onDetect: (barcode, args) {
               if (barcode.rawValue == null) {
                 print('Failed to scan Barcode');
-              } else {
+              } else if (barcode.rawValue == 'djoni' && stopScan) {
+                setState(() {
+                  stopScan = false;
+                });
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AboutPostPage()));
                 final String code = barcode.rawValue!;
                 print('Barcode found! $code');
               }

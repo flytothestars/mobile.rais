@@ -12,6 +12,8 @@ import 'package:mobileapp_diplom2022_1_0_0/screens/profile.dart';
 import 'package:mobileapp_diplom2022_1_0_0/services/constant.dart';
 import 'package:mobileapp_diplom2022_1_0_0/services/user_service.dart';
 
+import '../services/post_service.dart';
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -19,14 +21,52 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currenIndex = 0;
-
   late GoogleMapController googleMapController;
   Set<Marker> markers = {};
   List<Marker> markersPostamat = [];
+  Map<MarkerId, Marker> _markersPostamat = <MarkerId, Marker>{};
   List<Post> _postList = [];
   double lat = 0;
   double lng = 0;
+  bool timerBron = false;
 
+  _initMarker(dataPos, id) {
+    var markerVal = id.toString();
+    final MarkerId markerId = MarkerId(markerVal);
+    final Marker marker = Marker(
+        markerId: markerId,
+        position:
+            LatLng(double.parse(dataPos['lat']), double.parse(dataPos['lng'])),
+        infoWindow: InfoWindow(title: '${dataPos['address']}'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        onTap: () {
+          _showButtomModel(context, dataPos);
+        });
+    setState(() {
+      _markersPostamat[markerId] = marker;
+    });
+  }
+
+  _checkPost() async {
+    ApiResponse response = await getPost();
+    List listPost = response.data as List;
+    print(listPost);
+    for (int i = 0; i < listPost.length; i++) {
+      print("============== hello world =================");
+      _initMarker(listPost[i], listPost[i]['id']);
+      print('${listPost[i]['address']}');
+    }
+  }
+
+  Future loadPost() async {
+    final response = await http
+        .get(Uri.parse(listPostURL), headers: {'Accept': 'application/json'});
+    final jsonResponse = json.decode(response.body)['post'];
+    Post listPost = new Post.fromJson(jsonResponse);
+    return listPost;
+  }
+
+  //======================================================================
   _initUserCurrentPosition() async {
     Position position = await _determinePosition();
     lat = position.latitude;
@@ -41,13 +81,6 @@ class _HomeState extends State<Home> {
         position: LatLng(position.latitude, position.longitude)));
   }
 
-  Future<List<Post>> retrievePosts() async {
-    final response = await http
-        .get(Uri.parse(listPostURL), headers: {'Accept': 'application/json'});
-    var data = jsonDecode(response.body.toString());
-    return _postList;
-  }
-
   _initPostamatPosition() async {
     markersPostamat.add(Marker(
         markerId: MarkerId(''),
@@ -55,7 +88,7 @@ class _HomeState extends State<Home> {
         infoWindow: InfoWindow(title: "Postamat #"),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
         onTap: () {
-          _showButtomModel(context);
+          //_showButtomModel(context);
         }));
     setState(() {});
   }
@@ -66,8 +99,8 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    retrievePosts();
-    _initPostamatPosition();
+    _checkPost();
+    //_initPostamatPosition();
     _initUserCurrentPosition();
     super.initState();
   }
@@ -88,16 +121,17 @@ class _HomeState extends State<Home> {
               onMapCreated: (GoogleMapController controller) {
                 googleMapController = controller;
               },
-              markers: markersPostamat.map((e) => e).toSet(),
+              markers: Set<Marker>.of(_markersPostamat.values),
+              //markers: markersPostamat.map((e) => e).toSet(),
             )
-            : Profile(
-          // : ListView.builder(
-          //     itemCount: _postList.length,
-          //     itemBuilder: (BuildContext context, int index) {
-          //       Post post = _postList[index];
-          //       return Text('${post.address}');
-          //     },
-            ),
+          : Profile(
+              // : ListView.builder(
+              //     itemCount: _postList.length,
+              //     itemBuilder: (BuildContext context, int index) {
+              //       Post post = _postList[index];
+              //       return Text('${post.address}');
+              //     },
+              ),
       //Profile(),
       floatingActionButton: Container(
         height: 70,
@@ -106,8 +140,9 @@ class _HomeState extends State<Home> {
           child: FloatingActionButton(
               onPressed: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const QRViewExample()));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const QRViewExample()));
               },
               child: Container(
                 height: 30,
@@ -137,14 +172,70 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _showButtomModel(context) {
+  void _showButtomModel(context, dataPos) {
     showModalBottomSheet(
+        backgroundColor: Colors.transparent,
         context: context,
-        builder: (BuildContext c) {
-          return Container(
-            height:450,
-            child: Text("asd"),
-          );
+        builder: (context) {
+          return StatefulBuilder(builder: (BuildContext context,
+              StateSetter setState /*You can rename this!*/) {
+            return Container(
+                padding: const EdgeInsets.all(25),
+                //color: Colors.white,
+                margin: EdgeInsets.only(left: 30, right: 30, bottom: 30),
+                height: timerBron ? 250 : 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Адрес: " + '${dataPos['address']}',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 3),
+                        Divider(
+                          height: 1,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          "Доступно PowerBank: " +
+                              '${dataPos['slot'] - dataPos['freeslot']}',
+                          style: TextStyle(fontSize: 18, color: Colors.green),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          "Свободные слоты: " + '${dataPos['freeslot']}',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {},
+                            child: timerBron
+                                ? Text("Арендовать")
+                                : Text("Забрать")),
+                        ElevatedButton(
+                            onPressed: () {
+                              print("timerbron: ");
+                              print(timerBron);
+                            },
+                            child: Text("Вернуть")),
+                      ],
+                    ),
+                  ],
+                ));
+          });
         });
   }
 
