@@ -220,17 +220,17 @@ class _HomeState extends State<Home> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        ElevatedButton(
-                            onPressed: () {},
-                            child: timerBron
-                                ? Text("Арендовать")
-                                : Text("Забрать")),
-                        ElevatedButton(
-                            onPressed: () {
-                              print("timerbron: ");
-                              print(timerBron);
-                            },
-                            child: Text("Вернуть")),
+                        // ElevatedButton(
+                        //     onPressed: () {},
+                        //     child: timerBron
+                        //         ? Text("Арендовать")
+                        //         : Text("Забрать")),
+                        // ElevatedButton(
+                        //     onPressed: () {
+                        //       print("timerbron: ");
+                        //       print(timerBron);
+                        //     },
+                        //     child: Text("Вернуть")),
                       ],
                     ),
                   ],

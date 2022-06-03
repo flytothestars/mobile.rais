@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-const baseURL = 'http://192.168.0.122:8080/api';
+const mainURL = 'http://192.168.0.122:8080';
+const baseURL = mainURL + '/api';
 const loginURL = baseURL + '/login';
 const registerURL = baseURL + '/register';
 const logoutURL = baseURL + '/logout';
@@ -11,7 +12,13 @@ const commentURL = baseURL + '/comments';
 const sendSmsURL = baseURL + '/sms';
 const checkSmsURL = baseURL + '/check';
 const listPostURL = baseURL + '/list';
+//images
+const getImage = mainURL + '/images';
 
+//startRent
+const startRent = baseURL + '/start';
+
+//Error
 const serverError = 'Server error';
 const unauthorized = 'Unauthorized';
 const somethingWentWrong = 'Something went wrong, try again';

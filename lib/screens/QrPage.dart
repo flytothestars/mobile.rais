@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/aboutpostpage.dart';
 
+import '../models/api_response.dart';
+import '../services/post_service.dart';
+
 class QRViewExample extends StatefulWidget {
   const QRViewExample({Key? key}) : super(key: key);
 
@@ -12,6 +15,17 @@ class QRViewExample extends StatefulWidget {
 class _QRViewExampleState extends State<QRViewExample> {
   MobileScannerController cameraController = MobileScannerController();
   bool stopScan = true;
+  List listPost = [];
+  _checkPost() async {
+    ApiResponse response = await getPost();
+    listPost = response.data as List;
+  }
+
+  @override
+  void initState() {
+    _checkPost();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +74,27 @@ class _QRViewExampleState extends State<QRViewExample> {
             onDetect: (barcode, args) {
               if (barcode.rawValue == null) {
                 print('Failed to scan Barcode');
-              } else if (barcode.rawValue == 'djoni' && stopScan) {
-                setState(() {
-                  stopScan = false;
-                });
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const AboutPostPage()));
-                final String code = barcode.rawValue!;
-                print('Barcode found! $code');
+              } else {
+                for (int i = 0; i < listPost.length; i++) {
+                  if (barcode.rawValue == listPost[i]['qr_code'] && stopScan) {
+                    setState(() {
+                      stopScan = false;
+                    });
+                    print("=================================");
+                    print(listPost[i]);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AboutPostPage(
+                                id: listPost[i]['id'],
+                                qr_code: listPost[i]['qr_code'],
+                                address: listPost[i]['address'],
+                                slot: listPost[i]['slot'],
+                                freeslot: listPost[i]['freeslot'])));
+                    final String code = barcode.rawValue!;
+                    print('Barcode found! $code');
+                  }
+                }
               }
             }));
   }
