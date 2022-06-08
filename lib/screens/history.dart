@@ -93,18 +93,35 @@ class _HistoryPageState extends State<HistoryPage> {
                   child: Text('Чек ${list[index]['id']}'),
                 ),
                 ListTile(
-                  title: Text('Дата начала'),
-                  subtitle: Text(
-                      '${DateTime.parse(list[index]['time_start']).year} - ${DateTime.parse(list[index]['time_start']).month} - ${DateTime.parse(list[index]['time_start']).day}'),
-                ),
+                    title: Text('Дата начала'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            '${DateTime.parse(list[index]['time_start']).year} - ${DateTime.parse(list[index]['time_start']).month} - ${DateTime.parse(list[index]['time_start']).day}'),
+                        Text(
+                            '${DateTime.parse(list[index]['time_start']).hour}:${DateTime.parse(list[index]['time_start']).minute}:${DateTime.parse(list[index]['time_start']).second}'),
+                      ],
+                    )),
                 ListTile(
-                  title: Text(list[index]['time_end'].toString() != 'null'
-                      ? 'Дата окончание'
-                      : 'Аренда действует'),
-                  subtitle: Text(list[index]['time_end'].toString() != 'null'
-                      ? '${DateTime.parse(list[index]['time_end']).year} - ${DateTime.parse(list[index]['time_end']).month} - ${DateTime.parse(list[index]['time_end']).day}'
-                      : '${dateNow}'),
-                )
+                    title: Text(list[index]['time_end'].toString() != 'null'
+                        ? 'Дата окончание'
+                        : 'Аренда действует'),
+                    subtitle: list[index]['time_end'].toString() != 'null'
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  '${DateTime.parse(list[index]['time_end']).year} - ${DateTime.parse(list[index]['time_end']).month} - ${DateTime.parse(list[index]['time_end']).day}'),
+                              Text(
+                                  '${DateTime.parse(list[index]['time_end']).hour}:${DateTime.parse(list[index]['time_end']).minute}:${DateTime.parse(list[index]['time_end']).second}'),
+                            ],
+                          )
+                        : Text('${dateNow}')),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: Text('сумма ${list[index]['money']}'),
+                ),
               ],
             ),
           );
