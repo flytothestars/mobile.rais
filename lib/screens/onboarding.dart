@@ -33,20 +33,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     new PageModel(
         color: const Color(0xFF0097A7),
         imageAssetPath: 'assets/01.jpg',
-        title: 'Screen 1',
-        body: 'Share your ideas with the team',
+        title: 'Скачай',
+        body: 'Скачай наш приложение',
         doAnimateImage: true),
     new PageModel(
         color: const Color(0xFF536DFE),
         imageAssetPath: 'assets/01.jpg',
-        title: 'Screen 2',
-        body: 'See the increase in productivity & output',
+        title: 'Открой',
+        body: 'Быстрая регистрация',
         doAnimateImage: true),
     new PageModel(
         color: const Color(0xFF9B90BC),
         imageAssetPath: 'assets/01.jpg',
-        title: 'Screen 3',
-        body: 'Connect with the people from different places',
+        title: 'Арендуй',
+        body: 'Арендуй PowerBank',
         doAnimateImage: true),
   ];
 }

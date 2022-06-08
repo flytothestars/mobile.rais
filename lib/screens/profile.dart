@@ -1,13 +1,19 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mobileapp_diplom2022_1_0_0/screens/BonusPage.dart';
-import 'package:mobileapp_diplom2022_1_0_0/screens/NotifiPage.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/chat.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/history.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/logreg.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/setting.dart';
 import 'package:mobileapp_diplom2022_1_0_0/screens/widgets/widgetButton.dart';
 import 'package:mobileapp_diplom2022_1_0_0/services/user_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../services/constant.dart';
+import 'profile_info.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -15,116 +21,170 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  String timeNow = "";
+  late Timer _timer;
+  var dateStart;
+  bool checkTimeRent = false;
+
+  _getDifferentTime() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    final response = await http.post(Uri.parse(getHistoryURL), headers: {
+      'Accept': 'application/json'
+    }, body: {
+      'id_user': pref.getInt('userId').toString(),
+    });
+    print("Profile");
+    print(jsonDecode(response.body)['history']['time_start']);
+    setState(() {
+      checkTimeRent = true;
+      dateStart =
+          DateTime.parse(jsonDecode(response.body)['history']['time_start']);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getDifferentTime();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (this.mounted) {
+        setState(() {
+          timeNow = "Time is ${DateTime.now().difference(dateStart)}";
+          // Your state change code goes here
+        });
+      }
+    });
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+            backgroundColor: Colors.white,
+            title: Center(
+              child: Text(
+                "Личный кабинет",
+                style: TextStyle(color: Colors.blue),
+              ),
+            )),
         backgroundColor: Colors.grey[200],
         body: Column(
           children: [
             SizedBox(
-              height: 70,
+              height: 10,
             ),
             //ProfilePicture
-            SizedBox(
-                height: 115,
-                width: 115,
-                child: Stack(
-                  fit: StackFit.expand,
+            // SizedBox(
+            //     height: 115,
+            //     width: 115,
+            //     child: Stack(
+            //       fit: StackFit.expand,
+            //       children: [Text(' ${timeNow}')],
+            //     )),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              //child: Container(
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20), // if you need this
+                  side: BorderSide(
+                    color: Colors.grey.withOpacity(0.1),
+                    width: 1,
+                  ),
+                ),
+                elevation: 5,
+                child: Column(
                   children: [
-                    CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://www.ixbt.com/img/x780/n1/news/2022/2/1/elon-musk_large.jpg')),
-                    Positioned(
-                        right: -12,
-                        bottom: 0,
-                        child: SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: FlatButton(
-                              padding: EdgeInsets.zero,
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(50)),
-                              color: Colors.white,
-                              onPressed: () {},
-                              child: Container(
-                                  width: 20,
-                                  height: 20,
-                                  child: new Image.asset(
-                                      'assets/camera_48px.png'))),
-                        ))
+                    ListTile(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProfileInfo()));
+                      },
+                      leading: Icon(
+                        FontAwesomeIcons.user,
+                        color: Colors.blue,
+                      ),
+                      title: Text("+7 777 777 77 77"),
+                      subtitle: Text(
+                        'Профиль',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
                   ],
-                )),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Spacer(),
-                SizedBox(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const NotifiPage()));
-                    },
-                    child: new Image.asset('assets/star_160px.png'),
-                    style: TextButton.styleFrom(
-                      primary: Colors.grey[850],
-                      padding: EdgeInsets.all(20),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                  height: 100,
-                  width: 100,
                 ),
-                Spacer(),
-                SizedBox(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const BonusPage()));
-                    },
-                    child: Text("Бонус, акции"),
-                    style: TextButton.styleFrom(
-                      primary: Colors.grey[850],
-                      padding: EdgeInsets.all(20),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                  height: 100,
-                  width: 200,
-                ),
-                Spacer(),
-              ],
+              ),
             ),
+
+            checkTimeRent
+                ? Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(20), // if you need this
+                        side: BorderSide(
+                          color: Colors.grey.withOpacity(0.1),
+                          width: 1,
+                        ),
+                      ),
+                      elevation: 5,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: Icon(
+                              FontAwesomeIcons.timeline,
+                              color: Colors.blue,
+                            ),
+                            title: Text("Время аренды"),
+                            subtitle: Text(
+                              ' ${timeNow}',
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : SizedBox(
+                    height: 20,
+                  ),
             // Button
             ProfileMenu(
-                icon: FontAwesomeIcons.bell, text: 'История поездок', press: () {
+                icon: FontAwesomeIcons.bell,
+                text: 'История поездок',
+                press: () {
                   Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HistoryPage()));
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HistoryPage()));
                 }),
             ProfileMenu(
-                icon: FontAwesomeIcons.gears, text: 'Настройки', press: () {
+                icon: FontAwesomeIcons.gears,
+                text: 'Настройки',
+                press: () {
                   Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SettingPage()));
-  }),
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SettingPage()));
+                }),
             ProfileMenu(
                 icon: FontAwesomeIcons.personCircleCheck,
                 text: 'Служба поддержка',
                 press: () {
-                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ChatPage()),
-                );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ChatPage()),
+                  );
                 }),
             ProfileMenu(
                 icon: FontAwesomeIcons.arrowRight,
@@ -132,7 +192,8 @@ class _ProfileState extends State<Profile> {
                 press: () {
                   logout();
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => LogReg()), (route) => false);
+                      MaterialPageRoute(builder: (context) => LogReg()),
+                      (route) => false);
                 }),
           ],
         ));

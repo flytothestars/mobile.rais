@@ -6,10 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:mobileapp_diplom2022_1_0_0/screens/info_page1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/api_response.dart';
 import '../services/constant.dart';
+import '../services/post_service.dart';
 import 'home.dart';
+import 'info_page2.dart';
 
-class AboutPostPage extends StatelessWidget {
+class AboutPostPage extends StatefulWidget {
   AboutPostPage(
       {Key? key,
       required this.qr_code,
@@ -23,15 +26,43 @@ class AboutPostPage extends StatelessWidget {
   final String qr_code;
   final int slot;
   final int freeslot;
+  @override
+  State<AboutPostPage> createState() => _AboutPostPageState();
+}
+
+class _AboutPostPageState extends State<AboutPostPage> {
+  bool checkActive = false;
+
+  _checkActive() async {
+    print(checkActive);
+    ApiResponse response = await getHistory();
+    if (response.data == null) {
+      setState(() {
+        checkActive = true;
+      });
+      print(checkActive);
+    } else {
+      List listHis = response.data as List;
+      print("=======================History========================");
+      print(listHis[0].toString());
+      if (listHis[0]['is_active'].toString() == 'true') {
+        setState(() {
+          checkActive = true;
+        });
+      }
+      print(checkActive);
+    }
+    print(checkActive);
+  }
 
   _startRent(context) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    print('${id}');
+    print('${widget.id}');
     final response = await http.post(Uri.parse(startRent), headers: {
       'Accept': 'application/json'
     }, body: {
       'id_user': pref.getInt('userId').toString(),
-      'id_post_first': id.toString(),
+      'id_post_first': widget.id.toString(),
     });
     var checkStart = jsonDecode(response.body)['message'].toString();
     print(checkStart);
@@ -39,8 +70,33 @@ class AboutPostPage extends StatelessWidget {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => InfoPage()));
     } else {
-      print("==================== eror aboput page =========================");
+      print("==================== error about page =========================");
     }
+  }
+
+  _closeRent(context) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    print('${widget.id}');
+    final response = await http.post(Uri.parse(closeRent), headers: {
+      'Accept': 'application/json'
+    }, body: {
+      'id_user': pref.getInt('userId').toString(),
+      'id_post_first': widget.id.toString(),
+    });
+    var checkStart = jsonDecode(response.body)['message'].toString();
+    print('======================= ${checkStart}');
+    if (checkStart == 'true') {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => InfoPage2()));
+    } else {
+      print("==================== error about page =========================");
+    }
+  }
+
+  @override
+  void initState() {
+    _checkActive();
+    super.initState();
   }
 
   @override
@@ -49,7 +105,7 @@ class AboutPostPage extends StatelessWidget {
       onWillPop: () => _willPop(context),
       child: Scaffold(
           appBar: AppBar(
-            title: Text('Postomat: ${qr_code}'),
+            title: Text('Postomat: ${widget.qr_code}'),
           ),
           body: Container(
               padding: const EdgeInsets.only(
@@ -77,9 +133,9 @@ class AboutPostPage extends StatelessWidget {
                       SizedBox(
                         height: 10,
                       ),
-                      Text('Доступно: ${slot - freeslot}',
+                      Text('Доступно: ${widget.slot - widget.freeslot}',
                           style: TextStyle(fontSize: 18, color: Colors.green)),
-                      Text('Свободные слоты: ${freeslot}',
+                      Text('Свободные слоты: ${widget.freeslot}',
                           style: TextStyle(fontSize: 18))
                     ],
                   ),
@@ -89,13 +145,17 @@ class AboutPostPage extends StatelessWidget {
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        ElevatedButton(
-                            onPressed: () {
-                              _startRent(context);
-                            },
-                            child: Text('Арендовать')),
-                        ElevatedButton(
-                            onPressed: () {}, child: Text('Вернуть')),
+                        checkActive
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  _startRent(context);
+                                },
+                                child: Text('Арендовать'))
+                            : ElevatedButton(
+                                onPressed: () {
+                                  _closeRent(context);
+                                },
+                                child: Text('Вернуть')),
                       ])
                 ],
               ))),

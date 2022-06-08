@@ -6,7 +6,8 @@ import 'package:mobileapp_diplom2022_1_0_0/models/user.dart';
 import 'package:mobileapp_diplom2022_1_0_0/services/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<ApiResponse> checkSms(String number, String originCode, String userCode) async {
+Future<ApiResponse> checkSms(
+    String number, String originCode, String userCode) async {
   ApiResponse apiResponse = ApiResponse();
   try {
     final response = await http.post(Uri.parse(checkSmsURL), headers: {
