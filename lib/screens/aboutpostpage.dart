@@ -32,6 +32,26 @@ class AboutPostPage extends StatefulWidget {
 
 class _AboutPostPageState extends State<AboutPostPage> {
   bool checkActive = false;
+  bool isCard = false;
+
+  _checkCard() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    final response = await http.post(Uri.parse(userURL), headers: {
+      'Accept': 'application/json'
+    }, body: {
+      'id_user': pref.getInt('userId').toString(),
+    });
+    if (jsonDecode(response.body)['card'] == 'true') {
+      setState(() {
+        isCard = false;
+      });
+    } else {
+      setState(() {
+        isCard = true;
+      });
+    }
+  }
 
   _checkActive() async {
     print(checkActive);
@@ -96,6 +116,7 @@ class _AboutPostPageState extends State<AboutPostPage> {
   @override
   void initState() {
     _checkActive();
+    _checkCard();
     super.initState();
   }
 
@@ -148,7 +169,11 @@ class _AboutPostPageState extends State<AboutPostPage> {
                         checkActive
                             ? ElevatedButton(
                                 onPressed: () {
-                                  _startRent(context);
+                                  if (isCard) {
+                                    _startRent(context);
+                                  } else {
+                                    showAlertDialog(context);
+                                  }
                                 },
                                 child: Text('Арендовать'))
                             : ElevatedButton(
@@ -159,6 +184,33 @@ class _AboutPostPageState extends State<AboutPostPage> {
                       ])
                 ],
               ))),
+    );
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the button
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Внимание"),
+      content: Text("Добавьте банковскую карту"),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 

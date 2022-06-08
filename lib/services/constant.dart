@@ -25,6 +25,7 @@ const deleteCard = baseURL + '/delete_card';
 
 //User
 const editUser = baseURL + '/edit_user';
+const getHistoryOnUser = baseURL + '/get_history_user';
 //Error
 const serverError = 'Server error';
 const unauthorized = 'Unauthorized';

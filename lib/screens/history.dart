@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -17,9 +18,45 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  List list = [];
+  var dateNow;
+  var dateStart;
+  late Timer _timer;
+
+  _getHistory() async {
+    ApiResponse response = await getHistoryProfile();
+    print('info ===============');
+    setState(() {
+      list = response.data as List;
+    });
+    for (int i = 0; i < list.length; i++) {
+      if (list[i]['time_end'].toString() == 'null') {
+        setState(() {
+          dateStart = DateTime.parse(list[i]['time_start']);
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _getHistory();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (this.mounted) {
+        setState(() {
+          dateNow = "${DateTime.now().difference(dateStart)}";
+          // Your state change code goes here
+        });
+      }
+    });
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
   }
 
   @override
@@ -32,9 +69,47 @@ class _HistoryPageState extends State<HistoryPage> {
           style: TextStyle(color: Colors.blue),
         ),
       ),
+      backgroundColor: Colors.grey[200],
       body: Container(
-        child: Center(),
-      ),
+
+          //child: Text('History'),
+          child: ListView.builder(
+        padding: EdgeInsets.all(6),
+        itemCount: list.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20), // if you need this
+              side: BorderSide(
+                color: Colors.grey.withOpacity(0.1),
+                width: 1,
+              ),
+            ),
+            elevation: 5,
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text('Чек ${list[index]['id']}'),
+                ),
+                ListTile(
+                  title: Text('Дата начала'),
+                  subtitle: Text(
+                      '${DateTime.parse(list[index]['time_start']).year} - ${DateTime.parse(list[index]['time_start']).month} - ${DateTime.parse(list[index]['time_start']).day}'),
+                ),
+                ListTile(
+                  title: Text(list[index]['time_end'].toString() != 'null'
+                      ? 'Дата окончание'
+                      : 'Аренда действует'),
+                  subtitle: Text(list[index]['time_end'].toString() != 'null'
+                      ? '${DateTime.parse(list[index]['time_end']).year} - ${DateTime.parse(list[index]['time_end']).month} - ${DateTime.parse(list[index]['time_end']).day}'
+                      : '${dateNow}'),
+                )
+              ],
+            ),
+          );
+        },
+      )),
     );
   }
 }

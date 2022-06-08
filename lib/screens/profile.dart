@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/constant.dart';
+import 'info_page4.dart';
 import 'profile_info.dart';
 
 class Profile extends StatefulWidget {
@@ -25,6 +26,19 @@ class _ProfileState extends State<Profile> {
   late Timer _timer;
   var dateStart;
   bool checkTimeRent = false;
+  String userNumber = "";
+  _getUser() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    final response = await http.post(Uri.parse(userURL), headers: {
+      'Accept': 'application/json'
+    }, body: {
+      'id_user': pref.getInt('userId').toString(),
+    });
+    setState(() {
+      userNumber = jsonDecode(response.body)['user']['email'].toString();
+    });
+  }
 
   _getDifferentTime() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -46,6 +60,7 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
+    _getUser();
     _getDifferentTime();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (this.mounted) {
@@ -114,7 +129,7 @@ class _ProfileState extends State<Profile> {
                         FontAwesomeIcons.user,
                         color: Colors.blue,
                       ),
-                      title: Text("+7 777 777 77 77"),
+                      title: Text('${userNumber}'),
                       subtitle: Text(
                         'Профиль',
                         style: TextStyle(color: Colors.grey),
@@ -176,6 +191,15 @@ class _ProfileState extends State<Profile> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => const SettingPage()));
+                }),
+            ProfileMenu(
+                icon: FontAwesomeIcons.personCircleCheck,
+                text: 'Тарифы',
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const InfoPage4()),
+                  );
                 }),
             ProfileMenu(
                 icon: FontAwesomeIcons.personCircleCheck,
