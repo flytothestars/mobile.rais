@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const mainURL = 'http://192.168.38.156:8080';
+const mainURL = 'https://www.flytothestar.ru';
 const baseURL = mainURL + '/api';
 const loginURL = baseURL + '/login';
 const registerURL = baseURL + '/register';

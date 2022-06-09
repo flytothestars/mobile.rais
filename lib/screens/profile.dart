@@ -65,7 +65,7 @@ class _ProfileState extends State<Profile> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (this.mounted) {
         setState(() {
-          timeNow = "Time is ${DateTime.now().difference(dateStart)}";
+          timeNow = "${DateTime.now().difference(dateStart)}";
           // Your state change code goes here
         });
       }
@@ -219,6 +219,24 @@ class _ProfileState extends State<Profile> {
                       MaterialPageRoute(builder: (context) => LogReg()),
                       (route) => false);
                 }),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 100,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: NetworkImage(
+                            "https://www.flytothestar.ru/images/RAIS_free-file.png")),
+                  ),
+                ),
+                Text(
+                  'by Ramazan and Islambek',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+              ],
+            )
           ],
         ));
   }
